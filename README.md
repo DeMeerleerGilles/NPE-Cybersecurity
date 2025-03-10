@@ -1,6 +1,6 @@
 # NPE-Cybersecurity
 
-Repo voor de NPE opdracht van cybersecurity en virtualisatie
+Cybersecurity & Virtualisation - NPE Opdracht 2024-2025
 
 ## Team
 
