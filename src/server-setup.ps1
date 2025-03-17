@@ -14,7 +14,6 @@ if (-Not (Test-Path $VM_ISO_PATH)) {
     exit
 }
 
-
 # Maak een nieuwe VM aan
 Write-Host "Maak een nieuwe VM aan: $VM_NAME"
 VBoxManage createvm --name "$VM_NAME" --ostype "Ubuntu_64" --register
