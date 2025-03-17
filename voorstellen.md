@@ -19,4 +19,3 @@ Link: <https://www.cve.org/CVERecord?id=CVE-2020-15778>
 In Sudo before 1.8.26, if pwfeedback is enabled in /etc/sudoers, users can trigger a stack-based buffer overflow in the privileged sudo process. (pwfeedback is a default setting in Linux Mint and elementary OS; however, it is NOT the default for upstream and many other packages, and would exist only if enabled by an administrator.) The attacker needs to deliver a long string to the stdin of getln() in tgetpass.c.
 
 Link: <https://www.cve.org/CVERecord?id=CVE-2019-18634>
-
