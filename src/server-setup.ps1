@@ -33,10 +33,10 @@ Start-Sleep -Seconds 30
 
 # Kopieer het installatiescript naar de VM
 Write-Host "Kopieer het installatiescript naar de VM"
-VBoxManage guestcontrol "$VM_NAME" copyto --username <gebruikersnaam> --password <wachtwoord> --target-directory /tmp "$INSTALL_SCRIPT_PATH"
+VBoxManage guestcontrol "$VM_NAME" copyto --username osboxes --password osboxes.org --target-directory /tmp "$INSTALL_SCRIPT_PATH"
 
 # Voer het installatiescript uit in de VM
 Write-Host "Voer het installatiescript uit in de VM"
-VBoxManage guestcontrol "$VM_NAME" run --username <gebruikersnaam> --password <wachtwoord> -- /bin/bash /tmp/install_webserver.sh
+VBoxManage guestcontrol "$VM_NAME" run --username osboxes --password osboxes.org -- /bin/bash /tmp/install_webserver.sh
 
 Write-Host "De VM is succesvol aangemaakt en Apache 2.4.50 is geïnstalleerd!"
