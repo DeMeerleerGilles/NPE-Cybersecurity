@@ -19,8 +19,7 @@ Daarnaast heb je de `src` map van deze repository nodig. Deze map bevat alle con
 Om het script te kunnen gebruiken, moet je de volgende variabelen aanpassen:
 
 ```powershell
-$VM_VDI_PATH = "C:\Users\gille\VirtualBox VMs"  # Pad waar de virtuele schijf wordt opgeslagen
-$VM_ISO_PATH = "C:\ISOs\ubuntu-server.iso"  # Pad naar de Ubuntu Server ISO
+$VM_VDI_PATH = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 24.10 (64bit).vdi"  # Pad waar de virtuele schijf wordt opgeslagen
 ```
 
 ## Stap 3: Voer het script uit

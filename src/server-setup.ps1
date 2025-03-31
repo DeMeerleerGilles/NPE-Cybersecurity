@@ -2,7 +2,7 @@
 $VM_NAME = "Ubuntu-Server"
 $VM_RAM = "2048"            # RAM in MB
 $VM_CPUS = "2"              # Aantal CPU-cores
-$VM_VDI_PATH = "C:\path\to\Ubuntu-Server.vdi"  # Pad naar de bestaande Ubuntu Server VDI
+$VM_VDI_PATH = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 24.10 (64bit).vdi"  # Pad naar de bestaande Ubuntu Server VDI
 $INSTALL_SCRIPT_PATH = ".\install_webserver.sh"  # Relatief pad naar het Bash-script
 
 # Controleer of het Bash-script bestaat
@@ -29,11 +29,11 @@ Write-Host "Start de VM op: $VM_NAME"
 VBoxManage startvm "$VM_NAME" --type headless
 
 # Wacht even tot de VM is opgestart
-Start-Sleep -Seconds 30
+Start-Sleep -Seconds 90
 
 # Kopieer het installatiescript naar de VM
-Write-Host "Kopieer het installatiescript naar de VM"
-VBoxManage guestcontrol "$VM_NAME" copyto --username osboxes --password osboxes.org --target-directory /tmp "$INSTALL_SCRIPT_PATH"
+Write-Host "Bestand kopiëren naar de VM via SCP..."
+scp -o StrictHostKeyChecking=no -i "jouw_sleutel.pem" .\install_webserver.sh osboxes@<VM_IP>:/tmp
 
 # Voer het installatiescript uit in de VM
 Write-Host "Voer het installatiescript uit in de VM"
