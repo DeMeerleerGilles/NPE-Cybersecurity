@@ -30,3 +30,51 @@ Eens alle paden zijn ingesteld, kun je het script uitvoeren.
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process # Enkel nodig als je een beveiligingsfout krijgt
 .\server-setup.ps1
 ```
+
+Het script zal nu de omgeving opzetten. Dit kan enkele minuten duren.
+
+Log in op de server met de volgende gegevens:
+
+username: `osboxes`
+password: `osboxes.org`
+
+```bash
+# Intaller nu ssh op de server
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl enable --now ssh
+
+# Vraag het ip adres op van de server
+ip a
+```
+
+Verbind nu vanaf je host machine met de server via ssh. Dit kan met de volgende opdracht:
+
+```bash
+ssh osboxes@<ip-adres-van-server>
+```
+
+Kopieer het installatie script naar de server met scp of WinSCP:
+
+```bash
+scp -r ./install_webserver.sh osboxes@192.168.0.133:/home/osboxes/install_webserver.sh
+```
+
+Controlleer of het script goed is aangekomen met de volgende opdracht:
+
+```bash
+osboxes@osboxes:~$ ls
+install_webserver.sh
+```
+
+Maak het script uitvoerbaar met de volgende opdracht:
+
+```bash
+chmod +x install_webserver.sh
+```
+
+Voer het script uit met de volgende opdracht:
+
+```bash
+./install_webserver.sh
+```

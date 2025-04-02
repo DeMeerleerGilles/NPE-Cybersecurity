@@ -1,42 +1,48 @@
-# Variabelen
-$VM_NAME = "Ubuntu-Server"
-$VM_RAM = "2048"            # RAM in MB
-$VM_CPUS = "2"              # Aantal CPU-cores
-$VM_VDI_PATH = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 24.10 (64bit).vdi"  # Pad naar de bestaande Ubuntu Server VDI
-$INSTALL_SCRIPT_PATH = ".\install_webserver.sh"  # Relatief pad naar het Bash-script
-
-# Controleer of het Bash-script bestaat
-if (-Not (Test-Path $INSTALL_SCRIPT_PATH)) {
-    Write-Host "Fout: Het Bash-script is niet gevonden op het opgegeven pad: $INSTALL_SCRIPT_PATH"
-    exit
+$virtualBoxPath = "C:\Program Files\Oracle\VirtualBox"
+if (-not (Test-Path -Path "$env:PATH" -PathType Container -Include $virtualBoxPath)) {
+    $env:PATH += ";$virtualBoxPath"
+} else {
 }
 
-# Maak een nieuwe VM aan
-Write-Host "Maak een nieuwe VM aan: $VM_NAME"
-VBoxManage createvm --name "$VM_NAME" --ostype "Ubuntu_64" --register
+$vm_name="Cybersecurity_NPE_Ubuntu"
+$mediumLocation="c:\Users\gille\Downloads\64bit\64bit\Ubuntu Server 24.10 (64bit).vdi"
 
-# Configureer de VM
-Write-Host "Configureer de VM: RAM en CPU"
-VBoxManage modifyvm "$VM_NAME" --memory "$VM_RAM" --cpus "$VM_CPUS" --nic1 nat --graphicscontroller vboxsvga
 
-# Koppel de bestaande virtuele schijf aan de VM
-Write-Host "Koppel de bestaande virtuele schijf aan de VM: $VM_VDI_PATH"
-VBoxManage storagectl "$VM_NAME" --name "SATA Controller" --add sata --controller IntelAhci
-VBoxManage storageattach "$VM_NAME" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$VM_VDI_PATH"
+# Maak de VM aan
+VBoxManage createvm --name $vm_name `
+--ostype "Ubuntu24_LTS_64" `
+--register `
+--groups "/NPE Cybersecurity 24-25"
 
-# Start de VM op
-Write-Host "Start de VM op: $VM_NAME"
-VBoxManage startvm "$VM_NAME" --type headless
 
-# Wacht even tot de VM is opgestart
-Start-Sleep -Seconds 90
 
-# Kopieer het installatiescript naar de VM
-Write-Host "Bestand kopiëren naar de VM via SCP..."
-scp -o StrictHostKeyChecking=no -i "jouw_sleutel.pem" .\install_webserver.sh osboxes@<VM_IP>:/tmp
+VBoxManage modifyvm $vm_name `
+--memory 4096 `
+--cpus 2 `
+--vram 128 `
 
-# Voer het installatiescript uit in de VM
-Write-Host "Voer het installatiescript uit in de VM"
-VBoxManage guestcontrol "$VM_NAME" run --username osboxes --password osboxes.org -- /bin/bash /tmp/install_webserver.sh
+VBoxManage modifyvm $vm_name `
+--clipboard-mode bidirectional
 
-Write-Host "De VM is succesvol aangemaakt en Apache 2.4.50 is geïnstalleerd!"
+VBoxManage modifyvm $vm_name `
+--graphicscontroller vmsvga
+
+# Voeg een SATA-controller toe
+VBoxManage storagectl $vm_name `
+ --name "SATA Controller" `
+ --add sata `
+ --controller IntelAhci
+
+VBoxManage storageattach $vm_name `
+ --storagectl "SATA Controller" `
+  --port 0 `
+  --device 0 `
+  --type hdd `
+  --medium $mediumLocation
+
+  
+$interface = (Get-WmiObject -Query "SELECT * FROM Win32_NetworkAdapter WHERE NetEnabled = true AND Name LIKE '%Wireless%'").Name
+
+VBoxManage modifyvm $vm_name --nic1 bridged --bridgeadapter1 $interface
+
+VBoxManage startvm $vm_name
