@@ -1,42 +1,31 @@
 #!/bin/bash
 
-# Installeer Apache 2.4.50 (kwetsbare versie voor CVE-2021-42013)
-echo "Installeer Apache 2.4.50 vanaf bron..."
+echo "Installeer Apache 2.4.50 ..."
 
 # Update package lists
 sudo apt update
 
 # Installeer benodigde afhankelijkheden
-sudo apt install -y software-properties-common wget build-essential libpcre3 libpcre3-dev libssl-dev zlib1g-dev
+sudo apt install -y software-properties-common wget build-essential \
+    libpcre3 libpcre3-dev libssl-dev zlib1g-dev libexpat1-dev
 
-# Download Apache 2.4.50 broncode
+# Download Apache, APR en APR-Util broncode
 wget https://archive.apache.org/dist/httpd/httpd-2.4.50.tar.gz
-
-tar xvf httpd-2.4.50.tar.gz
-cd httpd-2.4.50
-
-# Installeer APR en APR-Util
 wget https://archive.apache.org/dist/apr/apr-1.7.0.tar.gz
 wget https://archive.apache.org/dist/apr/apr-util-1.6.1.tar.gz
 
-# Uitpakken en installeren van APR
+# Pak alles uit
+tar xvf httpd-2.4.50.tar.gz
 tar xvf apr-1.7.0.tar.gz
-cd apr-1.7.0
-./configure --prefix=/usr/local/apr
-make -j$(nproc)
-sudo make install
-cd ..
-
-# Uitpakken en installeren van APR-Util
 tar xvf apr-util-1.6.1.tar.gz
-cd apr-util-1.6.1
-./configure --with-apr=/usr/local/apr
-make -j$(nproc)
-sudo make install
-cd ..
+
+# Verplaats APR en APR-Util naar de Apache source tree
+mv apr-1.7.0 httpd-2.4.50/srclib/apr
+mv apr-util-1.6.1 httpd-2.4.50/srclib/apr-util
 
 # Configureer en compileer Apache
-./configure --enable-cgi --enable-so --with-mpm=event --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr
+cd httpd-2.4.50
+./configure --enable-cgi --enable-so --with-mpm=event
 make -j$(nproc)
 sudo make install
 
@@ -54,9 +43,10 @@ else
     exit 1
 fi
 
-# Configureer CGI-module
+# Activeer CGI-module
 sudo sed -i 's|#LoadModule cgi_module modules/mod_cgi.so|LoadModule cgi_module modules/mod_cgi.so|' /usr/local/apache2/conf/httpd.conf
 
+# Configureer CGI-directory
 echo "<Directory \"/usr/local/apache2/cgi-bin\">
     Options +ExecCGI
     AddHandler cgi-script .cgi .pl
@@ -66,7 +56,64 @@ echo "<Directory \"/usr/local/apache2/cgi-bin\">
 sudo apachectl restart
 
 # Maak een eenvoudige testpagina aan
-echo "<html><body><h1>Welkom op de kwetsbare Apache server!</h1></body></html>" | sudo tee /usr/local/apache2/htdocs/index.html
+cat << 'EOF' | sudo tee /usr/local/apache2/htdocs/index.html > /dev/null
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apache 2.4.50 – Cybersec Lab</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #f0f6fc;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #39ff14;
+      margin-bottom: 10px;
+      animation: blink 1.5s infinite;
+    }
+    h2 {
+      color: #58a6ff;
+    }
+    .box {
+      border: 1px solid #58a6ff;
+      padding: 20px;
+      background: #161b22;
+      box-shadow: 0 0 20px #39ff14;
+      display: inline-block;
+      max-width: 600px;
+      margin-top: 30px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .footer {
+      margin-top: 50px;
+      font-size: 0.9em;
+      color: #8b949e;
+    }
+  </style>
+</head>
+<body>
+  <h1>[!] Apache 2.4.50 actief</h1>
+  <div class="box">
+    <h2>Cybersecurity Lab VM</h2>
+    <p>Deze server draait een kwetsbare versie van Apache (<strong>CVE-2021-42013</strong>).</p>
+    <p>Gebruik deze omgeving enkel in een gecontroleerde lab-omgeving.</p>
+  </div>
+  <div class="footer">
+    Cybersecurity and Virtualization HOGENT<br>
+    <a href="https://github.com/DeMeerleerGilles">Gilles De Meerleer</a>, <a href="https://github.com/YanaCattoir">Yana Cattoir</a> en <a href="https://github.com/Davinski12">David Bukasa Ntunu</a> 
+  </div>
+</body>
+</html>
+EOF
 
 # Geef de juiste rechten
 sudo chmod -R 755 /usr/local/apache2/htdocs

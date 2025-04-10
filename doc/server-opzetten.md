@@ -4,7 +4,7 @@ In deze handleiding wordt uitgelegd hoe je de omgeving voor het project kunt opz
 
 ## Stap 1: Download de benodigde software en bestanden
 
-Download de ubuntu server VDI van OSboxes <https://www.osboxes.org/ubuntu-server/>
+Download de ubuntu server VDI (20.04.4) van OSboxes <https://sourceforge.net/projects/osboxes/files/v/vb/59-U-u-svr/20.04/20.04.4/64bit.7z/download>
 
 Pak deze zip uit en plaats de VDI in een map naar keuze. Voor het gemak kun je de VDI in de map van VirtualBox VMs plaatsen.
 
@@ -19,7 +19,7 @@ Daarnaast heb je de `src` map van deze repository nodig. Deze map bevat alle con
 Om het script te kunnen gebruiken, moet je de volgende variabelen aanpassen:
 
 ```powershell
-$VM_VDI_PATH = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 24.10 (64bit).vdi"  # Pad waar de virtuele schijf wordt opgeslagen
+$VM_VDI_PATH = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 20.04.4 (64bit).vdi"  # Pad waar de virtuele schijf wordt opgeslagen
 ```
 
 ## Stap 3: Voer het script uit
