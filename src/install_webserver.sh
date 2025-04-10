@@ -105,7 +105,7 @@ cat << 'EOF' | sudo tee /usr/local/apache2/htdocs/index.html > /dev/null
   <div class="box">
     <h2>Cybersecurity Lab VM</h2>
     <p>Deze server draait een kwetsbare versie van Apache (<strong>CVE-2021-42013</strong>).</p>
-    <p>Gebruik deze omgeving enkel in een gecontroleerde lab-omgeving.</p>
+    <p>Enkel gebruiken voor pen-testing.</p>
   </div>
   <div class="footer">
     Cybersecurity and Virtualization HOGENT<br>
