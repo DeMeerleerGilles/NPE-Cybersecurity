@@ -46,16 +46,18 @@ fi
 # Activeer CGI-module
 sudo sed -i 's|#LoadModule cgi_module modules/mod_cgi.so|LoadModule cgi_module modules/mod_cgi.so|' /usr/local/apache2/conf/httpd.conf
 
-# Configureer CGI-directory
-echo "<Directory \"/usr/local/apache2/cgi-bin\">
-    Options +ExecCGI
-    AddHandler cgi-script .cgi .pl
-</Directory>" | sudo tee -a /usr/local/apache2/conf/httpd.conf
+# Pas Directory-blok aan (vervang indien al aanwezig)
+sudo sed -i '/<Directory "\/usr\/local\/apache2\/cgi-bin">/,/<\/Directory>/c\<Directory "/usr/local/apache2/cgi-bin">\n    Options +ExecCGI\n    AddHandler cgi-script .cgi .pl .sh\n    AllowOverride All\n    Require all granted\n</Directory>' /usr/local/apache2/conf/httpd.conf
 
-# Herstart Apache
+# Voeg AllowEncodedSlashes toe als het nog niet bestaat
+if ! grep -q "AllowEncodedSlashes" /usr/local/apache2/conf/httpd.conf; then
+    echo -e "\n# Nodig voor exploit van CVE-2021-42013\nAllowEncodedSlashes NoDecode" | sudo tee -a /usr/local/apache2/conf/httpd.conf > /dev/null
+fi
+
+# Herstart Apache om alles toe te passen
 sudo apachectl restart
 
-# Maak een eenvoudige testpagina aan
+# Maak een eenvoudige testpagina aan met cybersecurity-thema
 cat << 'EOF' | sudo tee /usr/local/apache2/htdocs/index.html > /dev/null
 <!DOCTYPE html>
 <html lang="nl">
@@ -105,7 +107,7 @@ cat << 'EOF' | sudo tee /usr/local/apache2/htdocs/index.html > /dev/null
   <div class="box">
     <h2>Cybersecurity Lab VM</h2>
     <p>Deze server draait een kwetsbare versie van Apache (<strong>CVE-2021-42013</strong>).</p>
-    <p>Enkel gebruiken voor pen-testing.</p>
+    <p>Enkel te gebruiken voor pen testing.</p>
   </div>
   <div class="footer">
     Cybersecurity and Virtualization HOGENT<br>
