@@ -19,7 +19,7 @@ Daarnaast heb je de `src` map van deze repository nodig. Deze map bevat alle con
 Om het script te kunnen gebruiken, moet je de volgende variabelen aanpassen:
 
 ```powershell
-$VM_VDI_PATH = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 20.04.4 (64bit).vdi"  # Pad waar de virtuele schijf wordt opgeslagen
+$mediumLocation = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 20.04.4 (64bit).vdi"  # Pad waar de virtuele schijf wordt opgeslagen
 ```
 
 ## Stap 3: Voer het script uit
@@ -48,16 +48,18 @@ sudo systemctl enable --now ssh
 ip a
 ```
 
+Zet de VM in bridge mode. Dit kan gedaan worden door de netwerkadapter van de VM aan te passen in VirtualBox. Ga naar de instellingen van de VM en kies voor "Netwerk". Kies voor "Bridged Adapter" en selecteer de netwerkadapter die je wilt gebruiken.
+
 Verbind nu vanaf je host machine met de server via ssh. Dit kan met de volgende opdracht:
 
 ```bash
 ssh osboxes@<ip-adres-van-server>
 ```
 
-Kopieer het installatie script naar de server met scp of WinSCP:
+Kopieer het installatie script naar de server met scp of WinSCP (pas het ip adres aan naar het ip adres van de server):
 
 ```bash
-scp -r ./install_webserver.sh osboxes@192.168.0.133:/home/osboxes/install_webserver.sh
+scp -r ./install_webserver.sh osboxes@192.168.0.145:/home/osboxes/install_webserver.sh
 ```
 
 Controlleer of het script goed is aangekomen met de volgende opdracht:
@@ -78,3 +80,5 @@ Voer het script uit met de volgende opdracht:
 ```bash
 ./install_webserver.sh
 ```
+
+Als je nu suft vana

