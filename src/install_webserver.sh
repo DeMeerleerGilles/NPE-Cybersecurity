@@ -26,25 +26,18 @@ cd httpd-2.4.50
 make -j$(nproc)
 sudo make install
 
-# CGI config vooraf juist zetten
-sudo sed -i 's|#LoadModule cgi_module modules/mod_cgi.so|LoadModule cgi_module modules/mod_cgi.so|' /usr/local/apache2/conf/httpd.conf
-
-# Vervang Directory-blok van cgi-bin
-sudo sed -i '/<Directory "\/usr\/local\/apache2\/cgi-bin">/,/<\/Directory>/c\<Directory "/usr/local/apache2/cgi-bin">\n    Options +ExecCGI\n    AddHandler cgi-script .cgi .pl .sh\n    AllowOverride All\n    Require all granted\n</Directory>' /usr/local/apache2/conf/httpd.conf
-
-# Voeg AllowEncodedSlashes toe
-if ! grep -q "AllowEncodedSlashes" /usr/local/apache2/conf/httpd.conf; then
-    echo -e "\n# Nodig voor exploit van CVE-2021-42013\nAllowEncodedSlashes NoDecode" | sudo tee -a /usr/local/apache2/conf/httpd.conf > /dev/null
-
-fi
-
 # Zet apachectl in pad
 sudo ln -sf /usr/local/apache2/bin/apachectl /usr/bin/apachectl
 
-# CGI activeren in config
+# Activeer mod_cgi
 sudo sed -i 's|#LoadModule cgi_module modules/mod_cgi.so|LoadModule cgi_module modules/mod_cgi.so|' /usr/local/apache2/conf/httpd.conf
 
-# Zet Directory-blok voor cgi-bin correct
+# Voeg AddHandler toe als die ontbreekt
+if ! grep -q "AddHandler cgi-script .sh" /usr/local/apache2/conf/httpd.conf; then
+    echo -e "\n<IfModule mod_cgi.c>\n    AddHandler cgi-script .cgi .pl .sh\n</IfModule>" | sudo tee -a /usr/local/apache2/conf/httpd.conf > /dev/null
+fi
+
+# Correct Directory-blok voor cgi-bin
 sudo sed -i '/<Directory "\/usr\/local\/apache2\/cgi-bin">/,/<\/Directory>/c\
 <Directory "/usr/local/apache2/cgi-bin">\n\
     Options +ExecCGI\n\
@@ -53,7 +46,7 @@ sudo sed -i '/<Directory "\/usr\/local\/apache2\/cgi-bin">/,/<\/Directory>/c\
     Require all granted\n\
 </Directory>' /usr/local/apache2/conf/httpd.conf
 
-# AllowEncodedSlashes in de juiste context
+# Voeg AllowEncodedSlashes toe indien nodig
 if ! grep -q "AllowEncodedSlashes NoDecode" /usr/local/apache2/conf/httpd.conf; then
     echo -e "\n# Nodig voor exploit van CVE-2021-42013\n<Directory \"/\">\n    AllowEncodedSlashes NoDecode\n</Directory>" | sudo tee -a /usr/local/apache2/conf/httpd.conf > /dev/null
 fi
@@ -68,6 +61,18 @@ else
     echo "Apache kon niet starten. Controleer de logs."
     exit 1
 fi
+
+# Voeg een test CGI-script toe om RCE te testen
+cat << 'EOF' | sudo tee /usr/local/apache2/cgi-bin/test.sh > /dev/null
+#!/bin/bash
+echo "Content-type: text/plain"
+echo ""
+echo "[CGI WORKS] uid info:"
+id
+EOF
+
+# Maak script uitvoerbaar
+sudo chmod +x /usr/local/apache2/cgi-bin/test.sh
 
 # Testpagina aanmaken
 cat << 'EOF' | sudo tee /usr/local/apache2/htdocs/index.html > /dev/null

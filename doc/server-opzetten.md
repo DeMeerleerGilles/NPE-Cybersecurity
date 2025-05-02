@@ -81,4 +81,4 @@ Voer het script uit met de volgende opdracht:
 ./install_webserver.sh
 ```
 
-Als je nu suft vana
+Als je nu suft vanaf de kali naar het IP van de VM dan krijg je de vulnerable website te zien.
