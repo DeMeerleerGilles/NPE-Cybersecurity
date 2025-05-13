@@ -59,7 +59,7 @@ ssh osboxes@<ip-adres-van-server>
 Kopieer het installatie script naar de server met scp of WinSCP (pas het ip adres aan naar het ip adres van de server):
 
 ```bash
-scp -r ./install_webserver.sh osboxes@192.168.0.145:/home/osboxes/install_webserver.sh
+scp install.sh osboxes@192.168.0.163:/home/osboxes
 ```
 
 Controlleer of het script goed is aangekomen met de volgende opdracht:
@@ -72,13 +72,11 @@ install_webserver.sh
 Maak het script uitvoerbaar met de volgende opdracht:
 
 ```bash
-chmod +x install_webserver.sh
+chmod +x install.sh
 ```
 
 Voer het script uit met de volgende opdracht:
 
 ```bash
-./install_webserver.sh
+sudo ./install.sh
 ```
-
-Als je nu suft vanaf de kali naar het IP van de VM dan krijg je de vulnerable website te zien.
