@@ -19,7 +19,7 @@ sudo make install
 
 # 4. Controleer of sshd nu bestaat
 if [ ! -f /usr/local/sbin/sshd ]; then
-    echo "❌ sshd niet gevonden na installatie. Iets is misgegaan."
+    echo "sshd niet gevonden na installatie. Iets is misgegaan."
     exit 1
 fi
 
@@ -55,4 +55,4 @@ sudo systemctl daemon-reload
 sudo systemctl enable sshd.service
 sudo systemctl start sshd.service
 
-echo "✅ OpenSSH 8.3p1 is succesvol geïnstalleerd en draait!"
+echo "OpenSSH 8.3p1 is succesvol geïnstalleerd en draait!"
