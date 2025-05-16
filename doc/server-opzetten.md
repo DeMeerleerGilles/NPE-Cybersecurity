@@ -4,15 +4,14 @@ In deze handleiding wordt uitgelegd hoe je de omgeving voor het project kunt opz
 
 ## Stap 1: Download de benodigde software en bestanden
 
-Download de ubuntu server VDI (20.04.4) van OSboxes <https://sourceforge.net/projects/osboxes/files/v/vb/59-U-u-svr/20.04/20.04.4/64bit.7z/download>
+1. Download de ubuntu server VDI (20.04.4) van OSboxes <https://sourceforge.net/projects/osboxes/files/v/vb/59-U-u-svr/20.04/20.04.4/64bit.7z/download>
 
-Pak deze zip uit en plaats de VDI in een map naar keuze. Voor het gemak kun je de VDI in de map van VirtualBox VMs plaatsen.
+2. Pak deze zip uit en plaats de VDI in een map naar keuze. Voor het gemak kun je de VDI in de map van VirtualBox VMs plaatsen.
+   Deze staat standaard in `C:\Users\gebruikersnaam\VirtualBox VMs`.
 
-Deze staat standaard in `C:\Users\gebruikersnaam\VirtualBox VMs`.
+3. Kopieer het pad naar de map waarin je de VDI hebt geplaatst. In Windows kun je dit eenvoudig doen door de ISO te selecteren en op Ctrl + Shift + C te drukken. Dit kopieert het pad naar het bestand.
 
-Kopieer het pad naar de map waarin je de VDI hebt geplaatst. In Windows kun je dit eenvoudig doen door de ISO te selecteren en op Ctrl + Shift + C te drukken. Dit kopieert het pad naar het bestand.
-
-Daarnaast heb je de `src` map van deze repository nodig. Deze map bevat alle configuratiebestanden die nodig zijn om de omgeving op te zetten. Maak dus een clone van deze repository.
+4. Daarnaast heb je de `src` map van deze repository nodig. Deze map bevat alle configuratiebestanden die nodig zijn om de omgeving op te zetten. Maak dus een clone van deze repository.
 
 ## Stap 2: Pas de variabelen aan in het script
 
@@ -24,7 +23,7 @@ $mediumLocation = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 20.04.4 (64bit).v
 
 ## Stap 3: Voer het script uit
 
-Eens alle paden zijn ingesteld, kun je het script uitvoeren.
+1. Eens alle paden zijn ingesteld, kun je het script uitvoeren.
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process # Enkel nodig als je een beveiligingsfout krijgt
@@ -33,7 +32,7 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process # Enkel nodig als je 
 
 Het script zal nu de omgeving opzetten. Dit kan enkele minuten duren.
 
-Log in op de server met de volgende gegevens:
+2. Log in op de server met de volgende gegevens:
 
 username: `osboxes`
 password: `osboxes.org`
