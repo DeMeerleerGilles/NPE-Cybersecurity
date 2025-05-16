@@ -64,7 +64,7 @@ Controlleer of het script goed is aangekomen met de volgende opdracht:
 
 ```bash
 osboxes@osboxes:~$ ls
-install_webserver.sh
+install.sh
 ```
 
 Maak het script uitvoerbaar met de volgende opdracht:
