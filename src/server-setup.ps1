@@ -8,6 +8,15 @@ if (-not ($env:PATH -like "*$virtualBoxPath*")) {
 $vm_name = "Cybersecurity_NPE_Ubuntu"
 $mediumLocation = "C:\Users\gille\VirtualBox VMs\Ubuntu Server 20.04.4 (64bit).vdi"
 
+# Haal de eerste door VB erkende bridge-adapter op
+$bridge = (& VBoxManage list bridgedifs |
+            Select-String '^Name:' |
+            Select-Object -First 1).ToString().Split(':',2)[1].Trim()
+
+# Controleer welke adapter is gekozen             
+Write-Host "Gekozen bridged-adapter:" $bridge
+
+
 # Controleer of het VDI-bestand bestaat
 if (-not (Test-Path $mediumLocation)) {
     Write-Error "VDI-bestand niet gevonden op pad: $mediumLocation"
@@ -42,10 +51,8 @@ VBoxManage storageattach $vm_name `
     --type hdd `
     --medium "$mediumLocation"
 
-# Probeer een draadloze netwerkadapter op te halen
-$interface = (Get-WmiObject -Query "SELECT * FROM Win32_NetworkAdapter WHERE NetEnabled = true AND Name LIKE '%Wireless%'").Name
-
-VBoxManage modifyvm $vm_name --nic1 bridged --bridgeadapter1 $interface
+# Zet netwerk van VM in bridged adapter
+VBoxManage modifyvm $vm_name --nic1 bridged --bridgeadapter1 $bridge
 
 
 # Start de VM
