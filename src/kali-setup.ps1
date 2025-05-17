@@ -1,6 +1,6 @@
 # Kali VM toevoegen
 $kali_vm_name       = "Cybersecurity_NPE_Kali"
-$kali_mediumLocation = "C:\Users\bukas\VirtualBoxVMs\Kali Linux 2024.4 (64bit).vdi"
+$kali_mediumLocation = "C:\Users\gille\VirtualBox VMs\Kali Linux 2024.4 (64bit).vdi"
 
 # Controleer of het Kali-VDI-bestand bestaat
 if (-not (Test-Path $kali_mediumLocation)) {
